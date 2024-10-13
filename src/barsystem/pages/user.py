@@ -58,7 +58,7 @@ if st.query_params.get("google_sheet_url"):
     change_df = st.session_state["change_df"]
 
     name_filter = st_keyup("Name")
-    display_data_df = data_df[data_df.index.str.startswith(name_filter)]
+    display_data_df = data_df[data_df.index.str.startswith(name_filter.casefold())]
 
     column_spec = (1,) + (2,) * len(display_data_df.columns)
     cols = st.columns(column_spec)
