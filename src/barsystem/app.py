@@ -19,6 +19,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import numpy as np
 import pandas as pd
 import streamlit as st
+from st_keyup import st_keyup
+
+st.set_page_config(
+    page_title="Bar System",
+    page_icon=":material/local_bar:",
+    layout="wide",
+)
 
 st.title("Bar System")
 st.write("Welcome to the Bar System!")
@@ -30,7 +37,7 @@ data_df = pd.read_csv(
     index_col="name",
 )
 
-name_filter = st.text_input("Name")
+name_filter = st_keyup("Name")
 
 data_df = data_df[data_df.index.str.startswith(name_filter)]
 if "change_df" not in st.session_state:
