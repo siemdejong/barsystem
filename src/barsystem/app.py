@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -38,7 +39,7 @@ if "change_df" not in st.session_state:
     st.session_state["change_df"] = change_df
 change_df = st.session_state["change_df"]
 
-column_spec = (1,) + (4,) * len(data_df.columns)
+column_spec = (1,) + (2,) * len(data_df.columns)
 cols = st.columns(column_spec)
 cols[0].markdown("**Name**")
 for col, field_name in zip(cols[1:], data_df.columns, strict=True):
@@ -51,7 +52,15 @@ for name, row in data_df.iterrows():
     name_col.markdown(name)
     for col, consumable in zip(consumable_cols, data_df.columns, strict=True):
         col_value, col_add, col_remove = col.columns((1, 1, 1))
-        col_value.markdown(row[consumable])
+        color = "red" if change_df.loc[name, consumable] < 0 else "green"
+        arrow = "downward" if change_df.loc[name, consumable] < 0 else "upward"
+        value = str(row[consumable])
+        if change_df.loc[name, consumable]:
+            value = (
+                f"{value} :{color}[:material/arrow_{arrow}:"
+                f"{np.abs(change_df.loc[name, consumable].astype(int))}]"
+            )
+        col_value.markdown(value)
         col_add.button("", key=f"{name}-add-{consumable}", icon=":material/add:")
         col_remove.button(
             "",
@@ -60,15 +69,15 @@ for name, row in data_df.iterrows():
         )
         if st.session_state.get(f"{name}-add-{consumable}"):
             change_df.loc[name, consumable] += 1
+            st.session_state["change_df"] = change_df
+            st.rerun()
         if st.session_state.get(f"{name}-remove-{consumable}"):
             change_df.loc[name, consumable] -= 1
-        st.session_state["change_df"] = change_df
+            st.session_state["change_df"] = change_df
+            st.rerun()
 
-
-with st.popover("Submit"):
-    st.write(change_df)
-    if st.button("Confirm"):
-        data_df = data_df.add(change_df).astype(int)
-        data_df.to_csv(data_path)
-        st.session_state["change_df"] = pd.DataFrame().reindex_like(data_df).fillna(0)
-        st.rerun()
+if st.button("Confirm", type="primary"):
+    data_df = data_df.add(change_df).astype(int)
+    data_df.to_csv(data_path)
+    st.session_state["change_df"] = pd.DataFrame().reindex_like(data_df).fillna(0)
+    st.rerun()
