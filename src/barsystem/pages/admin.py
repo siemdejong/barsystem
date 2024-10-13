@@ -64,6 +64,8 @@ if google_sheet_url:
     qr = make_qr(site_url)
     st.download_button("Download QR", qr, "qr.png", mime="image/png")
 
+    st.link_button("Go to app", url="user?google_sheet_url=" + google_sheet_url)
+
     xlsx_buffer = io.BytesIO()
     data_df.to_excel(xlsx_buffer)
     st.download_button(
