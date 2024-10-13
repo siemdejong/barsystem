@@ -1,4 +1,4 @@
-"""A minimal bar system app.
+"""Provide menu.
 
 Copyright (C) 2024 Siem de Jong
 
@@ -18,12 +18,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import streamlit as st
 
-from barsystem.menu import menu
 
-st.set_page_config(
-    page_title="Bar System",
-    page_icon=":material/local_bar:",
-    layout="wide",
-)
+def user_menu() -> None:
+    """User menu."""
+    st.sidebar.page_link("pages/user.py", label="App")
 
-menu()
+
+def admin_menu() -> None:
+    """Admin menu."""
+    st.sidebar.page_link("pages/admin.py", label="Admin")
+
+
+def menu() -> None:
+    """Provide menu."""
+    user_menu()
+    admin_menu()

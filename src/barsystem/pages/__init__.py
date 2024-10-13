@@ -1,4 +1,4 @@
-"""A minimal bar system app.
+"""Pages.
 
 Copyright (C) 2024 Siem de Jong
 
@@ -15,15 +15,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-
-import streamlit as st
-
-from barsystem.menu import menu
-
-st.set_page_config(
-    page_title="Bar System",
-    page_icon=":material/local_bar:",
-    layout="wide",
-)
-
-menu()
