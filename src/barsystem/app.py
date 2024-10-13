@@ -1,0 +1,74 @@
+"""A minimal bar system app.
+
+Copyright (C) 2024 Siem de Jong
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
+import pandas as pd
+import streamlit as st
+
+st.title("Bar System")
+st.write("Welcome to the Bar System!")
+
+data_path = st.text_input("Path to data")
+
+data_df = pd.read_csv(
+    data_path,
+    index_col="name",
+)
+
+name_filter = st.text_input("Name")
+
+data_df = data_df[data_df.index.str.startswith(name_filter)]
+if "change_df" not in st.session_state:
+    change_df = pd.DataFrame().reindex_like(data_df).fillna(0)
+    change_df.index = data_df.index
+    st.session_state["change_df"] = change_df
+change_df = st.session_state["change_df"]
+
+column_spec = (1,) + (4,) * len(data_df.columns)
+cols = st.columns(column_spec)
+cols[0].markdown("**Name**")
+for col, field_name in zip(cols[1:], data_df.columns, strict=True):
+    col.markdown(f"**{field_name}**")
+
+for name, row in data_df.iterrows():
+    cols = st.columns(column_spec)
+    name_col = cols[0]
+    consumable_cols = cols[1:]
+    name_col.markdown(name)
+    for col, consumable in zip(consumable_cols, data_df.columns, strict=True):
+        col_value, col_add, col_remove = col.columns((1, 1, 1))
+        col_value.markdown(row[consumable])
+        col_add.button("", key=f"{name}-add-{consumable}", icon=":material/add:")
+        col_remove.button(
+            "",
+            key=f"{name}-remove-{consumable}",
+            icon=":material/remove:",
+        )
+        if st.session_state.get(f"{name}-add-{consumable}"):
+            change_df.loc[name, consumable] += 1
+        if st.session_state.get(f"{name}-remove-{consumable}"):
+            change_df.loc[name, consumable] -= 1
+        st.session_state["change_df"] = change_df
+
+
+with st.popover("Submit"):
+    st.write(change_df)
+    if st.button("Confirm"):
+        data_df = data_df.add(change_df).astype(int)
+        data_df.to_csv(data_path)
+        st.session_state["change_df"] = pd.DataFrame().reindex_like(data_df).fillna(0)
+        st.rerun()

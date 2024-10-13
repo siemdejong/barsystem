@@ -1,0 +1,84 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "barsystem"
+dynamic = ["dependencies", "optional-dependencies", "version"]
+requires-python = ">=3.9"
+authors = [
+    {name = "Siem de Jong", email = "siem.dejong@hotmail.nl"},
+]
+maintainers = [
+    {name = "Siem de Jong", email = "siem.dejong@hotmail.nl"}
+]
+description = "Bar system without bells and whistles for at your assocation."
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["barsystem"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+[project.urls]
+# Homepage = "https://github.com/siemdejong/barsystem"
+# Documentation = "https://readthedocs.org"
+Repository = "https://github.com/siemdejong/barsystem"
+"Bug Tracker" = "https://github.com/siemdejong/barsystem/issues"
+# Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+[tool.setuptools.dynamic]
+version = {attr = "barsystem.__version__"}
+dependencies = {file = "requirements.txt"}
+optional-dependencies = {dev = {file = "requirements-dev.txt"}}
+
+[tool.ruff.lint]
+select = ["ALL"]
+extend-ignore = ["D203", "D213", "COM812", "ISC001"]
+
+[tool.towncrier]
+directory = "changelog.d"
+filename = "CHANGELOG.md"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["", "", ""]
+title_format = "## [{version}](https://github.com/siemdejong/barsystem/tree/{version}) - {project_date}"
+issue_format = "[#{issue}](https://github.com/twisted/my-project/issues/{issue})"
+package = "barsystem"
+package_dir = "src"
+
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removed"
+name = "Removed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecated"
+name = "Deprecated"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true
