@@ -16,7 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import sys
+from pathlib import Path
+
 import streamlit as st
+
+sys.path.append(str(Path(__file__).absolute().parent.parent))
 
 from barsystem.menu import menu
 
