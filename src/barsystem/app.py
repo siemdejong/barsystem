@@ -81,11 +81,9 @@ if uploaded_file is not None:
             )
             if st.session_state.get(f"{name}-add-{consumable}"):
                 change_df.loc[name, consumable] += 1
-                st.session_state["change_df"] = change_df
                 st.rerun()
             if st.session_state.get(f"{name}-remove-{consumable}"):
                 change_df.loc[name, consumable] -= 1
-                st.session_state["change_df"] = change_df
                 st.rerun()
 
     if st.button("Confirm", type="primary"):
