@@ -40,27 +40,29 @@ if uploaded_file is not None:
         st.session_state["data_df"] = data_df
     data_df = st.session_state["data_df"]
 
-    name_filter = st_keyup("Name")
-
-    data_df = data_df[data_df.index.str.startswith(name_filter)]
     if "change_df" not in st.session_state:
         change_df = pd.DataFrame().reindex_like(data_df).fillna(0)
         change_df.index = data_df.index
         st.session_state["change_df"] = change_df
     change_df = st.session_state["change_df"]
 
-    column_spec = (1,) + (2,) * len(data_df.columns)
+    name_filter = st_keyup("Name")
+    display_data_df = data_df[data_df.index.str.startswith(name_filter)]
+
+    column_spec = (1,) + (2,) * len(display_data_df.columns)
     cols = st.columns(column_spec)
     cols[0].markdown("**Name**")
-    for col, field_name in zip(cols[1:], data_df.columns, strict=True):
+    for col, field_name in zip(cols[1:], display_data_df.columns, strict=True):
         col.markdown(f"**{field_name}**")
 
-    for name, row in data_df.iterrows():
+    for name, row in display_data_df.iterrows():
         cols = st.columns(column_spec)
         name_col = cols[0]
         consumable_cols = cols[1:]
         name_col.markdown(name)
-        for col, consumable in zip(consumable_cols, data_df.columns, strict=True):
+        for col, consumable in zip(
+            consumable_cols, display_data_df.columns, strict=True
+        ):
             col_value, col_add, col_remove = col.columns((1, 1, 1))
             color = "red" if change_df.loc[name, consumable] < 0 else "green"
             arrow = "downward" if change_df.loc[name, consumable] < 0 else "upward"
